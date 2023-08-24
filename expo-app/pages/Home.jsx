@@ -27,12 +27,16 @@ const Home = () => {
     try {
       let res = await fetch("https://dummyjson.com/products");
       let data = await res.json();
-      // console.log("data is here------->>>>>>>>>>>>",data);
+    //   console.log("data is here------->>>>>>>>>>>>",data);
       setProduct(data.products);
     } catch {
       console.log(err);
     }
   };
+
+  const searchProducts = (text) => {
+   
+  }
 
   return (
     <View>
@@ -56,7 +60,7 @@ const Home = () => {
           <TextInput
             placeholder="Search Your products"
             placeholderTextColor="white"
-            onChangeText={(prev) => setInput(prev)}
+            onChangeText={prev => {setInput(prev); searchProducts(prev)}}
             value={input}
             style={{
               color: "white",
@@ -70,7 +74,7 @@ const Home = () => {
           </TouchableOpacity>
         </View>
         <FlatList
-          //   horizontal
+          style={{marginVertical:10}}
           showsVerticalScrollIndicator={false}
           data={product}
           renderItem={({ item }) => <Product item={item} />}
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
     height: deviceHeight,
   },
   searchBox: {
-    width: deviceWidth / 1.12,
+    width: deviceWidth / 1.08,
     height: 56,
     borderWidth: 1,
     borderRadius: 7,

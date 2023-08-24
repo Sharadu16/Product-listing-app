@@ -9,10 +9,12 @@ import {
   FlatList,
   Modal,
   Pressable,
+  Alert,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import Product from "../components/Product";
+import Loader from "../components/Loader";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -22,6 +24,7 @@ const Home = () => {
   const [product, setProduct] = useState([]);
   const [oldData, setOldData] = useState([]);
   const searchRef = useRef();
+  const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
@@ -30,13 +33,17 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
+        setIsLoading(true)
       let res = await fetch("https://dummyjson.com/products");
       let data = await res.json();
       //   console.log("data is here------->>>>>>>>>>>>",data);
       setProduct(data.products);
       setOldData(data.products);
-    } catch {
-      console.log(err);
+      setIsLoading(false);
+      Alert.alert("data fetched successfully")
+    } catch(err) {
+        Alert.alert(err)
+        console.log(err);
     }
   };
 
@@ -121,6 +128,8 @@ const Home = () => {
             />
           </TouchableOpacity>
         </View>
+         {/* loader added here to indicate that data is loading  */}
+        <Loader loading={isLoading} />
         {/* open modal here to filter the products  */}
         <View style={styles.centeredView}>
           <Modal

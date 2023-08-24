@@ -1,11 +1,15 @@
+import { useEffect } from "react";
 import { View, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from "react-native";
-import React from "react";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
 
 const Product = ({ item }) => {
-  console.log("each products>>>>>", item);
+
+    useEffect(() => {
+        console.log("each products>>>>>", item);
+    }, [])
+    
   return (
     <View style={styles.container}>
       {item ? (

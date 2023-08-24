@@ -23,7 +23,8 @@ const Home = () => {
   const [input, setInput] = useState("");
   const [product, setProduct] = useState([]);
   const [oldData, setOldData] = useState([]);
-  const searchRef = useRef();
+  const [ind, setInd] = useState(0);
+  const listRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -40,9 +41,8 @@ const Home = () => {
       setProduct(data.products);
       setOldData(data.products);
       setIsLoading(false);
-      Alert.alert("data fetched successfully")
     } catch(err) {
-        Alert.alert(err)
+        Alert.alert(err);
         console.log(err);
     }
   };
@@ -108,7 +108,6 @@ const Home = () => {
                 onPress={() => {
                   setInput("");
                   searchProducts("");
-                  searchRef.current.clear();
                 }}
               >
                 <AntDesign name="close" size={22} color="white" />
@@ -148,6 +147,7 @@ const Home = () => {
                     let sortData = product.sort((a,b) => a.title > b.title ? 1 : -1);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
+                    listRef.current.scrollToIndex({animated: true, index: 0})
                   }}
                 >
                   <Text style={styles.modalText}>Sort By Name</Text>
@@ -157,6 +157,7 @@ const Home = () => {
                     let sortData = product.sort((a,b) => a.price - b.price);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
+                    listRef.current.scrollToIndex({animated: true, index: 0})
                   }}
                 >
                   <Text style={styles.modalText}>Price Low To high</Text>
@@ -166,6 +167,7 @@ const Home = () => {
                     let sortData = product.sort((a,b) => b.price - a.price);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
+                    listRef.current.scrollToIndex({animated: true, index: 0})
                   }}
                 >
                   <Text style={styles.modalText}>Price High To Low</Text>
@@ -175,6 +177,7 @@ const Home = () => {
                     let sortData = product.sort((a,b) => b.rating - a.rating);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
+                    listRef.current.scrollToIndex({animated: true, index: 0})
                   }}
                 >
                   <Text style={styles.modalText}>Sort By Rating</Text>
@@ -185,8 +188,9 @@ const Home = () => {
         </View>
         {/* modal has closed here   */}
         <FlatList
-          style={{ marginVertical: 10 }}
           showsVerticalScrollIndicator={false}
+          initialScrollIndex={ind}
+          ref={listRef}
           data={product}
           renderItem={({ item }) => <Product item={item} />}
         />

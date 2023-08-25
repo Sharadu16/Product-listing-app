@@ -34,7 +34,7 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-        setIsLoading(true)
+      setIsLoading(true)
       let res = await fetch("https://dummyjson.com/products");
       let data = await res.json();
       //   console.log("data is here------->>>>>>>>>>>>",data);
@@ -42,7 +42,7 @@ const Home = () => {
       setOldData(data.products);
       setIsLoading(false);
     } catch(err) {
-        Alert.alert(err);
+        Alert.alert("Unhandled Promise rejected");
         console.log(err);
     }
   };
@@ -69,9 +69,12 @@ const Home = () => {
         <Text
           style={{
             fontSize: 20,
-            color: "white",
+            color: "orange",
             marginVertical: 10,
             textAlign: "center",
+            textTransform: "uppercase",
+            marginVertical: 20,
+            fontWeight: "bold"
           }}
         >
           This is An Ecommerce App
@@ -247,6 +250,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     textAlign: "center",
     fontSize: 16,
-    fontWeight: "500",
+    fontWeight: "600",
+    color: 'teal'
   },
 });

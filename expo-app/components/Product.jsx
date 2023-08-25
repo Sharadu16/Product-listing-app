@@ -7,7 +7,7 @@ const deviceHeight = Dimensions.get("window").height;
 const Product = ({ item }) => {
 
     useEffect(() => {
-        console.log("each products>>>>>", item);
+        // console.log("each products>>>>>", item);
     }, [])
     
   return (

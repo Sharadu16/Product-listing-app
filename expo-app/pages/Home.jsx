@@ -15,6 +15,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
 import Product from "../components/Product";
 import Loader from "../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addProducts,
+  sortProducts,
+} from "../redux-toolkit/store/slices/ProductSlice";
 
 const deviceWidth = Dimensions.get("window").width;
 const deviceHeight = Dimensions.get("window").height;
@@ -28,34 +33,44 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
+  const dispatch = useDispatch();
+  const listData = useSelector((state) => state.product.list);
+
   useEffect(() => {
     fetchData();
+    // console.log("redux-data------------------->>",listData);
   }, []);
 
   const fetchData = async () => {
     try {
-      setIsLoading(true)
+      setIsLoading(true);
       let res = await fetch("https://dummyjson.com/products");
       let data = await res.json();
-      //   console.log("data is here------->>>>>>>>>>>>",data);
+      // console.log("data is here------->>>>>>>>>>>>",data);
       setProduct(data.products);
+      dispatch(addProducts(data.products));
       setOldData(data.products);
       setIsLoading(false);
-    } catch(err) {
-        Alert.alert("Unhandled Promise rejected");
-        console.log(err);
+    } catch (err) {
+      Alert.alert("Unhandled Promise rejected");
+      console.log(err);
     }
   };
 
   const searchProducts = (text) => {
     if (text == "") {
-      setProduct(oldData);
+      dispatch(addProducts(oldData));
     } else {
       let filterData = product.filter((item) => {
         return item.title.toLowerCase().indexOf(text.toLowerCase()) > -1;
       });
-      setProduct(filterData);
+      dispatch(addProducts(filterData));
     }
+  };
+
+  const FilterTheProducts = (data) => {
+    console.log("sorted data is ------------------------", data);
+    dispatch(sortProducts(data));
   };
 
   return (
@@ -74,7 +89,7 @@ const Home = () => {
             textAlign: "center",
             textTransform: "uppercase",
             marginVertical: 20,
-            fontWeight: "bold"
+            fontWeight: "bold",
           }}
         >
           This is An Ecommerce App
@@ -119,7 +134,7 @@ const Home = () => {
           </View>
           <TouchableOpacity
             onPress={() => {
-              setModalVisible(!modalVisible);
+              // setModalVisible(!modalVisible);
             }}
           >
             <AntDesign
@@ -130,7 +145,7 @@ const Home = () => {
             />
           </TouchableOpacity>
         </View>
-         {/* loader added here to indicate that data is loading  */}
+        {/* loader added here to indicate that data is loading  */}
         <Loader loading={isLoading} />
         {/* open modal here to filter the products  */}
         <View style={styles.centeredView}>
@@ -147,40 +162,43 @@ const Home = () => {
               <View style={styles.modalView}>
                 <TouchableOpacity
                   onPress={() => {
-                    let sortData = product.sort((a,b) => a.title > b.title ? 1 : -1);
-                    setProduct(sortData);
+                    let sortData = listData.sort((a, b) =>
+                      a.title > b.title ? 1 : -1
+                    );
+                    // setProduct(sortData);
+                    FilterTheProducts(sortData)
                     setModalVisible(!modalVisible);
-                    listRef.current.scrollToIndex({animated: true, index: 0})
+                    listRef.current.scrollToIndex({ animated: true, index: 0 });
                   }}
                 >
                   <Text style={styles.modalText}>Sort By Name</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    let sortData = product.sort((a,b) => a.price - b.price);
+                    let sortData = product.sort((a, b) => a.price - b.price);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
-                    listRef.current.scrollToIndex({animated: true, index: 0})
+                    listRef.current.scrollToIndex({ animated: true, index: 0 });
                   }}
                 >
                   <Text style={styles.modalText}>Price Low To high</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    let sortData = product.sort((a,b) => b.price - a.price);
+                    let sortData = product.sort((a, b) => b.price - a.price);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
-                    listRef.current.scrollToIndex({animated: true, index: 0})
+                    listRef.current.scrollToIndex({ animated: true, index: 0 });
                   }}
                 >
                   <Text style={styles.modalText}>Price High To Low</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
-                    let sortData = product.sort((a,b) => b.rating - a.rating);
+                    let sortData = product.sort((a, b) => b.rating - a.rating);
                     setProduct(sortData);
                     setModalVisible(!modalVisible);
-                    listRef.current.scrollToIndex({animated: true, index: 0})
+                    listRef.current.scrollToIndex({ animated: true, index: 0 });
                   }}
                 >
                   <Text style={styles.modalText}>Sort By Rating</Text>
@@ -194,7 +212,7 @@ const Home = () => {
           showsVerticalScrollIndicator={false}
           initialScrollIndex={ind}
           ref={listRef}
-          data={product}
+          data={listData}
           renderItem={({ item }) => <Product item={item} />}
         />
       </View>
@@ -244,13 +262,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 90,
     paddingVertical: 20,
     alignItems: "center",
-    
   },
   modalText: {
     marginBottom: 15,
     textAlign: "center",
     fontSize: 16,
     fontWeight: "600",
-    color: 'teal'
+    color: "teal",
   },
 });
